@@ -1,0 +1,9 @@
+<ul>
+    {{#each products}}
+    <li>
+        <a href="/product?nome={{this.nome}}&valor={{this.valor}}&descricao={{this.descricao}}">
+            <span>Nome</span>: {{this.nome}} | <span>Valor</span>: {{this.valor}}
+        </a>
+    </li>
+    {{/each}}
+</ul>
