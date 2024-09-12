@@ -68,3 +68,9 @@ h1 {
 #book-page .container {
   text-align: center;
 }
+
+.line-div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

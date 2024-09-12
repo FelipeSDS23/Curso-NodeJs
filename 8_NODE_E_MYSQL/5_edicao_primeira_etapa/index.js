@@ -105,6 +105,21 @@ app.post("/books/edit/:id", (req, res) => {
     })
 })
 
+app.get("/books/delete/:id", (req, res) => {
+    const id = req.params.id
+
+    const sql = `DELETE FROM books WHERE id = '${id}'`
+
+    conn.query(sql, (err) => {
+        if(err) {
+            console.log(err) 
+            return
+        }
+
+        res.redirect("/books")
+    })
+})
+
 app.get("/", (req, res) => {
     res.render("home")
 })
