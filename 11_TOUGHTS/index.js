@@ -13,7 +13,8 @@ const Tought = require('./models/Tought')
 const User = require('./models/User')
 
 // import routes
-const ToughtsRoutes = require('./routes/toughtsRoutes')
+const toughtsRoutes = require('./routes/toughtsRoutes')
+const authRoutes = require('./routes/authRoutes')
 
 // import controller
 const ToughtsController = require('./controllers/ToughtsController')
@@ -67,11 +68,13 @@ app.use((req, res, next) => {
 })
 
 // Routes
-app.use('/toughts', ToughtsRoutes)
+app.use('/toughts', toughtsRoutes)
+app.use('/', authRoutes)
 
 app.get('/', ToughtsController.showToughts)
 
 conn
+// .sync({force: true})
     .sync()
     .then(() => {
         app.listen(3000)
