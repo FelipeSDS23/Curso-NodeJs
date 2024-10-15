@@ -8,6 +8,7 @@ const checkAuth = require('../helpers/auth').checkAuth
 router.get('/add', checkAuth, ToughtsController.createToughts)
 router.post('/add', checkAuth, ToughtsController.createToughtsSave)
 router.get('/edit/:id', checkAuth, ToughtsController.updateTought)
+router.post('/edit', checkAuth, ToughtsController.updateToughtSave)
 router.get('/dashboard', checkAuth, ToughtsController.dashboard)
 router.post('/remove', checkAuth, ToughtsController.removeTought)
 router.get('/', ToughtsController.showToughts)
