@@ -1,81 +1,82 @@
 import api from '../utils/api'
 
-import {useState, useEffect} from 'react'
-import {useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import useFlashMessage from './useFlashMessage'
 
 export default function useAuth() {
-    const [authenticated, setAuthenticated] = useState(false)
-    const { setFlashMessage } = useFlashMessage()
-    const navigate = useNavigate ()
+  const [authenticated, setAuthenticated] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const history = useNavigate()
+  const { setFlashMessage } = useFlashMessage()
 
-    useEffect(() => {
-        const token = localStorage.getItem('token')
-        
-        if (token) {
-            api.defaults.headers.Authorization = `Bearer ${JSON.parse(token)}`
-            setAuthenticated(true)
-        }
-    }, [])
+  useEffect(() => {
+    const token = localStorage.getItem('token')
 
-    async function register(user) {
-
-        let msgText = 'Cadastro realizado com sucesso!'
-        let msgType = 'sucess'
-
-        try {
-            const data = await api.post('/users/register', user).then((response) => {
-                return response.data
-            })
-
-            await authUser(data)
-        } catch (error) {
-            msgText = error.response.data.message
-            msgType = 'error'
-        }
-
-        setFlashMessage(msgText, msgType)
+    if (token) {
+      api.defaults.headers.Authorization = `Bearer ${JSON.parse(token)}`
+      setAuthenticated(true)
     }
 
-    async function login(user) {
-        let msgText = 'Login realizado com sucesso'
-        let msgType = 'sucess'
+    setLoading(false)
+  }, [])
 
-        try {
-            const data = await api.post('/users/login', user).then((response) => {
-                return response.data
-            })
+  async function register(user) {
+    let msgText = 'Cadastro realizado com sucesso!'
+    let msgType = 'success'
 
-            await authUser(data)
-        } catch (error) {
-            msgText = error.response.data.message
-            msgType = 'error'
-        }
+    try {
+      const data = await api.post('/users/register', user).then((response) => {
+        return response.data
+      })
 
-        setFlashMessage(msgText, msgType)
+      await authUser(data)
+    } catch (error) {
+      // tratar erro
+      msgText = error.response.data.message
+      msgType = 'error'
     }
 
-    async function authUser(data) {
-        
-        setAuthenticated(true)
+    setFlashMessage(msgText, msgType)
+  }
 
-        localStorage.setItem('token', JSON.stringify(data.token))
+  async function login(user) {
+    let msgText = 'Login realizado com sucesso!'
+    let msgType = 'success'
 
-        navigate('/')
+    try {
+      const data = await api.post('/users/login', user).then((response) => {
+        return response.data
+      })
 
+      await authUser(data)
+    } catch (error) {
+      // tratar erro
+      msgText = error.response.data.message
+      msgType = 'error'
     }
 
-    function logout() {
-        const msgText = 'Logout realizado com sucesso!'
-        const msgType = 'sucess'
+    setFlashMessage(msgText, msgType)
+  }
 
-        setAuthenticated(false)
-        localStorage.removeItem('token')
-        api.defaults.headers.Authorization = undefined
-        navigate('/')
-        
-        setFlashMessage(msgText, msgType)
-    }
+  async function authUser(data) {
+    setAuthenticated(true)
+    localStorage.setItem('token', JSON.stringify(data.token))
 
-    return { authenticated, register, logout, login }
+    history('/')
+  }
+
+  function logout() {
+    const msgText = 'Logout realizado com sucesso!'
+    const msgType = 'success'
+
+    setAuthenticated(false)
+    localStorage.removeItem('token')
+    api.defaults.headers.Authorization = undefined
+    history('/login')
+
+    setFlashMessage(msgText, msgType)
+  }
+
+  return { authenticated, loading, register, login, logout }
 }
